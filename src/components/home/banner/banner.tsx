@@ -18,7 +18,6 @@ const Banner = () => {
         return () => { window.removeEventListener("scroll", handler) }
     }, [scrollFlag])
 
-    console.log(scrollFlag)
     return (
         <div className="">
             <div className="h-[600px] max-md:h-[500px] max-sm:h-[400px]"
