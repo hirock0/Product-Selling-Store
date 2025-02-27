@@ -1,22 +1,31 @@
+import mongoose from "mongoose";
 
-import { MongoClient, ServerApiVersion } from "mongodb"
-const uri = process.env.MONGODB_URI!
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
+let isConnected = false; // Global connection status
+
+export const DBConnection = async (): Promise<void> => {
+    if (isConnected) {
+        console.log("Already connected to the database.");
+        return;
     }
-});
 
-export async function DBConnection() {
+    const existingConnection = mongoose.connections.find((conn) => conn.readyState === 1);
+    if (existingConnection) {
+        console.log("Using existing database connection.");
+        isConnected = true;
+        return;
+    }
+
+    const mongoUri = process.env.MONGODB_URI!;
+    if (!mongoUri) {
+        throw new Error("MongoDB URI is not defined in environment variables.");
+    }
+
     try {
-        await client.connect();
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-        return client
+        const db = await mongoose.connect(mongoUri);
+        isConnected = db.connections[0].readyState === 1;
+        console.log("Database connected successfully.");
     } catch (error) {
-        throw new Error(String(error))
+        console.error("Error connecting to the database:", error);
+        throw new Error("Failed to connect to the database.");
     }
-}
-
+};

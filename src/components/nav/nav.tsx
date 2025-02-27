@@ -4,7 +4,15 @@ import Link from "next/link"
 import { useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
 import { MdMenu } from "react-icons/md";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch } from "@/utils/redux/store";
+import { fetcData } from "@/utils/redux/slices/slice";
+import Image from "next/image";
 const Nav = () => {
+    const dispatch = useDispatch<AppDispatch>()
+    const { user, loading, error } = useSelector((state: any) => state?.slices);
+
+
     const [menuFlag, setMenuFlag] = useState(false)
     useEffect(() => {
         const handler = () => {
@@ -15,6 +23,10 @@ const Nav = () => {
             window.removeEventListener("click", handler)
         }
     }, [menuFlag])
+
+    useEffect(() => {
+        dispatch(fetcData())
+    }, [dispatch])
     return (
         <nav>
             <div className=" h-20 flex items-center">
@@ -35,9 +47,17 @@ const Nav = () => {
                                     5
                                 </span>
                             </button>
-                            <Link href={"/user/login"}>
-                                Login
-                            </Link>
+                            {
+
+                                user !== null ?
+                                    <div className=" w-12 h-12 rounded-full overflow-hidden">
+                                        <Image src={user?.image} alt={user?.name} width={500} height={500} />
+                                    </div>
+                                    :
+                                    <Link href={"/user/login"}>
+                                        Login
+                                    </Link>
+                            }
                             <button onClick={(e) => { e.stopPropagation(), setMenuFlag(!menuFlag) }} className="  md:hidden">
                                 <MdMenu size={30} />
                             </button>

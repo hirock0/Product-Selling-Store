@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Nav from '@/components/nav/nav';
 import Footer from '@/components/footer/footer';
+import axios from "axios"
+import swal from "sweetalert"
 
 const Register = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -14,8 +16,16 @@ const Register = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-    const onSubmit = (data: any) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        data.image = imagePreview
+        const response = await axios.post("/pages/api/user/register", data)
+        if (response?.data?.success) {
+            swal({ title: response?.data?.message, icon: "success" })
+        } else {
+            swal({ title: response?.data?.message, icon: "warning" })
+        }
+
+
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +45,7 @@ const Register = () => {
                 backgroundPosition: "center",
                 backgroundSize: "cover"
             }}
-            className=' h-screen overflow-y-scroll'
+            className=' overflow-y-scroll'
         >
             <div className=" ">
                 <div className=" text-white z-50 sticky top-0 md:backdrop:filter md:backdrop-blur-3xl max-md:bg-slate-800">
