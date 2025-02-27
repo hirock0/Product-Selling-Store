@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { MdClose } from "react-icons/md";
 import swal from "sweetalert"
 import axios from "axios";
+import { signOut } from "next-auth/react"
 const Nav = () => {
     const [logoutPopup, setLogoutPopup] = useState(false)
     const [menuFlag, setMenuFlag] = useState(false)
@@ -20,6 +21,7 @@ const Nav = () => {
                     title: response?.data?.message,
                     icon: "success"
                 })
+                await signOut()
                 setLogoutPopup(false)
                 setLoggedUser(null)
             } else {

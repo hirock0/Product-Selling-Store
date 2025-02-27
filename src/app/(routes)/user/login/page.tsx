@@ -7,9 +7,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Nav from '@/components/nav/nav';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { signIn } from "next-auth/react"
 const Login = () => {
     const router = useRouter()
+    const [gooleLoading, setGooleLoading] = useState<boolean>(false)
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const onSubmit = async (data: any) => {
@@ -32,6 +34,20 @@ const Login = () => {
 
         }
     };
+
+    const googleLoginHandler = async () => {
+        setGooleLoading(true)
+        try {
+            await signIn("google", { callbackUrl: "/" })
+            setTimeout(() => {
+                setGooleLoading(false)
+            }, 1000)
+        } catch (error) {
+            setGooleLoading(false)
+            throw new Error(String(error))
+
+        }
+    }
 
     return (
         <main className=' min-h-screen'
@@ -107,7 +123,7 @@ const Login = () => {
                         </form>
 
                         {/* Google Login Button */}
-                        <button className="btn btn-outline btn-accent w-full flex items-center justify-center gap-2 mt-4">
+                        <button onClick={googleLoginHandler} className="btn btn-outline btn-accent w-full flex items-center justify-center gap-2 mt-4">
                             <FaGoogle /> Sign in with Google
                         </button>
 
