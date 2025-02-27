@@ -1,20 +1,38 @@
 "use client"
-
 import Link from "next/link"
 import { useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
 import { MdMenu } from "react-icons/md";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "@/utils/redux/store";
-import { fetcData } from "@/utils/redux/slices/slice";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { MdClose } from "react-icons/md";
+import swal from "sweetalert"
+import axios from "axios";
 const Nav = () => {
     const [logoutPopup, setLogoutPopup] = useState(false)
-    const dispatch = useDispatch<AppDispatch>()
-    const { user, loading, error } = useSelector((state: any) => state?.slices);
     const [menuFlag, setMenuFlag] = useState(false)
+    const [loggedUser, setLoggedUser] = useState<object | null>(null)
+    const logoutHandler = async () => {
+        try {
+            const response = await axios.get("/pages/api/user/logout")
+            if (response?.data?.success) {
+                swal({
+                    title: response?.data?.message,
+                    icon: "success"
+                })
+                setLogoutPopup(false)
+                setLoggedUser(null)
+            } else {
+                swal({
+                    title: response?.data?.message,
+                    icon: "warning"
+                })
+            }
+        } catch (error) {
+            throw new Error(String(error))
+
+        }
+    }
     useEffect(() => {
         const handler = () => {
             setMenuFlag(false)
@@ -25,27 +43,51 @@ const Nav = () => {
         }
     }, [menuFlag])
 
-    useEffect(() => {
-        dispatch(fetcData())
-    }, [dispatch])
 
     useEffect(() => {
         const disableScroll = () => {
             document.body.style.overflow = "hidden";
         };
-    
+
         const enableScroll = () => {
             document.body.style.overflow = "auto";
         };
-    
+
         if (logoutPopup) {
             disableScroll();
         } else {
             enableScroll();
         }
-    
+
         return () => enableScroll();
     }, [logoutPopup]);
+
+
+
+    useEffect(() => {
+        const controller = new AbortController()
+        const unsubscribe = async () => {
+            try {
+                const response = await axios.get("/pages/api/user/decodedUser", {
+                    signal: controller.signal
+                });
+                setLoggedUser(response?.data?.user)
+            } catch (error) {
+                if (axios.isCancel(error)) {
+                    console.log("Request canceled:", error.message);
+                } else {
+                    console.error("Error fetching user:", error);
+                }
+
+            }
+        }
+        unsubscribe()
+        return () => {
+            controller.abort()
+        }
+
+    }, [])
+
 
     return (
         <nav>
@@ -69,9 +111,9 @@ const Nav = () => {
                             </button>
                             {
 
-                                user !== null ?
+                                loggedUser ?
                                     <button onClick={() => setLogoutPopup(true)} className=" w-12 h-12 rounded-full overflow-hidden">
-                                        <Image src={user?.image} alt={user?.name} width={500} height={500} />
+                                        <Image src={loggedUser?.image} alt={loggedUser?.name} width={500} height={500} />
                                     </button>
                                     :
                                     <Link href={"/user/login"}>
@@ -112,7 +154,7 @@ const Nav = () => {
                     {/* Buttons */}
                     <div className="mt-5 flex justify-center gap-4">
                         <button
-
+                            onClick={() => logoutHandler()}
                             className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
                         >
                             Logout

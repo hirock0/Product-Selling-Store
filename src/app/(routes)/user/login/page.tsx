@@ -6,13 +6,31 @@ import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import Nav from '@/components/nav/nav';
-
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 const Login = () => {
+    const router = useRouter()
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
+    const onSubmit = async (data: any) => {
+        try {
+            const response = await axios.post("/pages/api/user/login", data)
+            if (response?.data?.success) {
+                swal({
+                    title: response?.data?.message,
+                    icon: "success"
+                })
+                router.push("/")
+            } else {
+                swal({
+                    title: response?.data?.message,
+                    icon: "warning"
+                })
+            }
+        } catch (error) {
+            throw new Error(String(error))
 
-    const onSubmit = (data: any) => {
-        console.log(data);
+        }
     };
 
     return (
