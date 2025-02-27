@@ -12,7 +12,7 @@ import { signOut } from "next-auth/react"
 const Nav = () => {
     const [logoutPopup, setLogoutPopup] = useState(false)
     const [menuFlag, setMenuFlag] = useState(false)
-    const [loggedUser, setLoggedUser] = useState<object | null>(null)
+    const [loggedUser, setLoggedUser] = useState<any>(null)
     const logoutHandler = async () => {
         try {
             const response = await axios.get("/pages/api/user/logout")
