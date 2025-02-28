@@ -42,7 +42,7 @@ const Banner = () => {
 
 
                 <div className=" ">
-                    <div className={`${scrollFlag ? " bg-zinc-600" : "bg-zinc-800/20"} fixed z-50 top-0 left-0 right-0 text-white`}>
+                    <div className={`${scrollFlag ? " bg-gradient-to-bl from-blue-500 to-yellow-500" : "bg-zinc-800/20"} fixed z-50 top-0 left-0 right-0 text-white`}>
                         <Nav />
                     </div>
                     <Swiper

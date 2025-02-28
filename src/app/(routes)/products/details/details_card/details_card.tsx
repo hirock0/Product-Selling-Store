@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import Image from "next/image";
@@ -7,7 +7,17 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import ZoomImage from "@/components/magnify/magnify";
+import { useSelector, useDispatch } from "react-redux";
+import { addCart, fetchData } from "@/utils/redux/slices/slice"
+import { AppDispatch, RootState } from "@/utils/redux/store";
+import { useParams } from "next/navigation";
+import axios from "axios";
 const Details_card = () => {
+  const { id } = useParams()
+  const dispatch = useDispatch<AppDispatch>()
+  const [carts, setCarts] = useState([])
+  const { user } = useSelector((state: any) => state?.slices)
+
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
 
   // Dummy product images
@@ -17,6 +27,34 @@ const Details_card = () => {
     "https://i.ibb.co.com/Zz39NdjQ/img-5.jpg",
     "https://i.ibb.co.com/Zz39NdjQ/img-5.jpg",
   ];
+
+  const addCartHandler = async () => {
+    try {
+      const cartData: any = {
+        userName: user?.name,
+        userEmail: user?.email,
+        productId: id
+      }
+      const response = await axios.post("/pages/api/products/carts", cartData)
+      if (response?.data?.success) {
+        dispatch(addCart(response?.data?.cart))
+        swal({
+          title: response?.data?.message,
+          icon: "success"
+        })
+        
+      } else {
+        swal({
+          title: response?.data?.message,
+          icon: "warning"
+        })
+      }
+    } catch (error) {
+      throw new Error(String(error))
+
+    }
+  }
+
 
   return (
     <div className="max-w-6xl mx-auto p-4 flex flex-col lg:flex-row gap-6">
@@ -70,7 +108,7 @@ const Details_card = () => {
         {/* Buttons */}
         <div className="flex gap-4">
           <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Buy Now</button>
-          <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">Add to Cart</button>
+          <button onClick={() => addCartHandler()} className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">Add to Cart</button>
         </div>
       </div>
     </div>

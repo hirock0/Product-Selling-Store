@@ -9,6 +9,12 @@ export interface IUser extends Document {
     isToken: string;
 }
 
+export interface Carts extends Document {
+    productId: string;
+    userEmail: string;
+    userName: string;
+}
+
 const userSchema = new mongoose.Schema<IUser>({
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -20,3 +26,11 @@ const userSchema = new mongoose.Schema<IUser>({
 }, { timestamps: true })
 
 export const userSchemaStr = mongoose.models.users || mongoose.model<IUser>("users", userSchema)
+
+const cartSchema = new mongoose.Schema<Carts>({
+    productId: { type: String, required: true },
+    userEmail: { type: String, required: true },
+    userName: { type: String, required: true },
+})
+
+export const cartsSchemaStr = mongoose.models.carts || mongoose.model<Carts>("carts", cartSchema)

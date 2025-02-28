@@ -1,12 +1,10 @@
 import Nav from "@/components/nav/nav"
-import Image from "next/image"
 import Details_card from "../details_card/details_card"
-const Details = async ({ params }: { params: Promise<{ id: string }> }) => {
-    const reqId = await params
+const Details = () => {
     return (
         <main>
             <div className="">
-                <div className=" bg-yellow-400 text-white">
+                <div className=" bg-yellow-400 text-white sticky top-0 z-50">
                     <Nav />
                 </div>
                 <div className="">
