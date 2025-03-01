@@ -6,7 +6,7 @@ import axios from "axios";
 // Define State Type
 interface UserState {
     user: object | null;
-    carts:any;
+    carts: any;
     loading: boolean;
     error: string | null;
 
@@ -24,7 +24,7 @@ export const fetchData: any = createAsyncThunk("users/fetcData", async (_, { rej
     try {
         const response = await axios.get("/pages/api/user/decodedUser");
         const user = response?.data?.user
-        const cartsResponse = await axios.get("/pages/api/products/carts")
+        const cartsResponse = await axios.get(`/pages/api/products/carts/${user?.email}`)
         const carts = cartsResponse?.data?.carts
         return { user, carts };
     } catch (error) {

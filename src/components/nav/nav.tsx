@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
 import { MdMenu } from "react-icons/md";
 import Image from "next/image";
-import { motion } from "framer-motion";
-
 import swal from "sweetalert"
 import axios from "axios";
 import { signOut } from "next-auth/react"
@@ -52,7 +50,6 @@ const Nav = () => {
             window.removeEventListener("click", handler)
         }
     }, [menuFlag])
-
 
     useEffect(() => {
         const disableScroll = () => {
@@ -119,7 +116,10 @@ const Nav = () => {
                                 className=" relative">
                                 <MdShoppingCart size={30} />
                                 <span className=" absolute text-white -top-2 right-0 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                                    {carts?.length}
+                                    {
+                                        (carts == undefined || carts == null) ?
+                                            0 : carts?.length
+                                    }
                                 </span>
                             </button>
                             {

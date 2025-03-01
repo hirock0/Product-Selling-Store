@@ -1,6 +1,5 @@
 import { cartsSchemaStr } from "@/lib/Schema/schema";
 import { NextRequest, NextResponse } from "next/server";
-
 export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json()
@@ -9,7 +8,13 @@ export async function POST(request: NextRequest) {
             userEmail,
             productId
         } = reqBody
-        const findCart = await cartsSchemaStr.findOne({ productId: productId })
+        const findCart = await cartsSchemaStr.findOne(
+
+            {
+                productId: productId,
+                userEmail: userEmail
+            }
+        )
         if (findCart) {
             return NextResponse.json({
                 message: "Product is already in cart",
@@ -37,19 +42,3 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
-    try {
-        const carts = await cartsSchemaStr.find()
-        return NextResponse.json({
-            message: "Carts founded",
-            success: true,
-            carts: carts
-        })
-    } catch (error: any) {
-        return NextResponse.json({
-            message: error.message,
-            success: false
-        })
-
-    }
-}
